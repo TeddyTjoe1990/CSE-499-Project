@@ -8,23 +8,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:app/main.dart';
+import 'package:app/main.dart';  // adjust this if your app's package name or main file is different
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Calculate total and change correctly', (WidgetTester tester) async {
+    // Build the app
+    await tester.pumpWidget(CashierApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Find the TextFields by their label text
+    final itemNameField = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.labelText == 'Item Name',
+    );
+    final unitPriceField = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.labelText == 'Unit Price',
+    );
+    final quantityField = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.labelText == 'Quantity',
+    );
+    final amountPaidField = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.labelText == 'Amount Paid',
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Enter some values
+    await tester.enterText(itemNameField, 'Apple');
+    await tester.enterText(unitPriceField, '10000');
+    await tester.enterText(quantityField, '3');
+    await tester.enterText(amountPaidField, '40000');
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Tap the "Calculate Total" button
+    final calculateButton = find.text('Calculate Total');
+    expect(calculateButton, findsOneWidget);
+
+    await tester.tap(calculateButton);
+    await tester.pump(); // Rebuild widget after state changes
+
+    // Check if total and change are displayed correctly
+    expect(find.text('Total: Rp30000'), findsOneWidget);
+    expect(find.text('Change: Rp10000'), findsOneWidget);
   });
 }
