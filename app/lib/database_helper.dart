@@ -9,7 +9,7 @@ class DatabaseHelper {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('kasir.db');
+    _database = await _initDB('cashier.db');
     return _database!;
   }
 
