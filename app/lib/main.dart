@@ -9,12 +9,21 @@ void main() {
 Item apple = Item("Apple", 1.50);
 Item bread = Item("Bread", 2.00);
 
-List<Item> items = [apple, bread];  
+List<Item> items = [apple, bread];
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+double totalPrice() {
+  double total = 0.0;
+  for (var item in items) {
+    total += item.price; // Asegúrate de castear el precio a double
+  }
+  return total;
+}
 
+final myController = TextEditingController();
 
+class _MainAppState extends State<MainApp> {
+
+  double change = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -118,8 +127,89 @@ class MainApp extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              Text("Total")
-
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Total:", style: TextStyle(fontSize: 20)),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text("\$ " + totalPrice().toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30))
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text("Payment"),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(child: TextField(
+                    controller: myController,
+                  )),
+                  SizedBox(
+                    width: 20,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      String payment = myController.text;
+                      double paymentNumber = double.tryParse(payment) ?? 0;
+                      double total = totalPrice();
+                      setState(() {
+                        change = paymentNumber - total;
+                      });
+            
+                    },
+                    child: Text("Calculate Change"),
+                  ),
+                  
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Change:", style: TextStyle(fontSize: 20)),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text("\$ " + change.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30))
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text("Submit"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text("Clear"),
+                  ),
+                  
+                ],
+              ),
             ],
           )
           // child: Column(
@@ -184,4 +274,14 @@ class MainApp extends StatelessWidget {
       ),
     );
   }
+
+}
+
+class MainApp extends StatefulWidget {
+  const MainApp({super.key});
+
+  @override
+  _MainAppState createState() => _MainAppState();
+
+  
 }
