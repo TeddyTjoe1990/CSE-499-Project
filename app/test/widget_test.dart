@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:app/main.dart';  // adjust this if your app's package name or main file is different
+import 'package:app/features/SQLiteConfig/main.dart';  // adjust this if your app's package name or main file is different
 
 void main() {
   testWidgets('Calculate total and change correctly', (WidgetTester tester) async {
