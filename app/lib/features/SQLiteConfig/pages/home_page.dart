@@ -1,5 +1,5 @@
-import 'package:app/models/task.dart';
-import 'package:app/services/database_services.dart';
+import 'package:app/features/SQLiteConfig/models/task.dart';
+import 'package:app/features/SQLiteConfig/services/database_services.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
