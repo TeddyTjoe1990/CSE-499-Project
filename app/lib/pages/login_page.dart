@@ -45,13 +45,13 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: _emailCtrl,
                 decoration: InputDecoration(labelText: 'Email'),
-                validator: (val) => val == null || !val.contains('@') ? 'Email tidak valid' : null,
+                validator: (val) => val == null || !val.contains('@') ? 'Invalid email' : null,
               ),
               TextFormField(
                 controller: _passCtrl,
                 decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
-                validator: (val) => val == null || val.length < 6 ? 'Minimal 6 karakter' : null,
+                validator: (val) => val == null || val.length < 6 ? 'Minimum 6 characters' : null,
               ),
               SizedBox(height: 20),
               ElevatedButton(
@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               TextButton(
                 onPressed: () => Navigator.pushReplacementNamed(context, '/register'),
-                child: Text('Belum punya akun? Daftar'),
+                child: Text("Don't have an account? Register"),
               ),
             ],
           ),
