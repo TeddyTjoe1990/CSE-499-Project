@@ -1,6 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/user_model.dart';
+import '../models/transaction_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -31,10 +32,21 @@ class DatabaseHelper {
             password TEXT NOT NULL
           )
         ''');
+
+        await db.execute('''
+          CREATE TABLE transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            itemName TEXT NOT NULL,
+            quantity INTEGER NOT NULL,
+            price REAL NOT NULL,
+            date TEXT NOT NULL
+          )
+        ''');
       },
     );
   }
 
+  // User methods
   Future<int> registerUser(User user) async {
     final db = await database;
     return await db.insert('users', user.toMap());
@@ -51,5 +63,17 @@ class DatabaseHelper {
       return User.fromMap(result.first);
     }
     return null;
+  }
+
+  // Transaction methods
+  Future<int> insertTransaction(TransactionModel transaction) async {
+    final db = await database;
+    return await db.insert('transactions', transaction.toMap());
+  }
+
+  Future<List<TransactionModel>> getTransactions() async {
+    final db = await database;
+    final result = await db.query('transactions');
+    return result.map((json) => TransactionModel.fromMap(json)).toList();
   }
 }

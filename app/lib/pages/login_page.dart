@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../db/database_helper.dart';
-//import '../models/user_model.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -19,7 +18,6 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return; 
 
       if (user != null) {
-        //Navigate to the home page if login succeed
         Navigator.pushReplacementNamed(context, '/home');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Welcome, ${user.name}')),
