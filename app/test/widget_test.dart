@@ -13,7 +13,7 @@ import 'package:app/main.dart';  // adjust this if your app's package name or ma
 void main() {
   testWidgets('Calculate total and change correctly', (WidgetTester tester) async {
     // Build the app
-    await tester.pumpWidget(CashierApp());
+    await tester.pumpWidget(MyApp());
 
     // Find the TextFields by their label text
     final itemNameField = find.byWidgetPredicate(
