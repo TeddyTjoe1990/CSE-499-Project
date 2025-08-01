@@ -155,7 +155,12 @@ class PdfInvoiceService {
     var filePath = "${output.path}/$fileName.pdf";
     final file = File(filePath);
     await file.writeAsBytes(byteList);
+
+    print("Intentando abrir el archivo en la ruta: $filePath");
+    
     final result = await OpenFilex.open(filePath);
+
+    print('Resultado de la apertura: Tipo: ${result.type}, Mensaje: ${result.message}');
 
     if (result.type == ResultType.done) {
       print('El archivo se abrió correctamente.');
