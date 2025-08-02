@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'summary_page.dart';
 
 class CashierHome extends StatefulWidget {
   @override
@@ -69,6 +70,16 @@ class _CashierHomeState extends State<CashierHome> {
               Text(
                 'Change: Rp$changeAmount',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 30), // spase before new button
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => SummaryPage()),
+                  );
+                },
+                child: Text('View Daily Summary'),
               ),
             ],
           ),
