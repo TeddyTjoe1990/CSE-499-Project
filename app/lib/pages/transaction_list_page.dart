@@ -2,30 +2,44 @@ import 'package:flutter/material.dart';
 import '../db/database_helper.dart';
 import '../models/transaction_model.dart';
 
-class TransactionListPage extends StatelessWidget {
-  final dbHelper = DatabaseHelper();
+class TransactionListPage extends StatefulWidget {
+  @override
+  _TransactionListPageState createState() => _TransactionListPageState();
+}
+
+class _TransactionListPageState extends State<TransactionListPage> {
+  late Future<List<TransactionModel>> _transactions;
+
+  @override
+  void initState() {
+    super.initState();
+    _transactions = DatabaseHelper().getAllTransactions();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Transaction List')),
+      appBar: AppBar(
+        title: Text('Transaction List'),
+      ),
       body: FutureBuilder<List<TransactionModel>>(
-        future: dbHelper.getTransactions(),
+        future: _transactions,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting)
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty)
-            return Center(child: Text('No transactions yet'));
-
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No transactions found.'));
+          }
+          final transactions = snapshot.data!;
           return ListView.builder(
-            itemCount: snapshot.data!.length,
+            itemCount: transactions.length,
             itemBuilder: (context, index) {
-              final tx = snapshot.data![index];
+              final tx = transactions[index];
               return ListTile(
                 title: Text(tx.itemName),
-                subtitle: Text('Qty: ${tx.quantity} | Rp ${tx.price.toStringAsFixed(0)}'),
-                trailing: Text(tx.date.substring(0, 10)),
+                subtitle: Text('Qty: ${tx.quantity} | Price: \$${tx.price.toStringAsFixed(2)}'),
+                trailing: Text(tx.date.split('T').first), // tampilkan tanggal saja
               );
             },
           );

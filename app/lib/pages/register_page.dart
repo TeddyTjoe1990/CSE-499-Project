@@ -2,26 +2,43 @@ import 'package:flutter/material.dart';
 import '../db/database_helper.dart';
 import '../models/user_model.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
 
-  void _register(BuildContext context) async {
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
+  }
+
+  void _register() async {
     if (_formKey.currentState!.validate()) {
       final user = User(
-        name: _nameCtrl.text,
-        email: _emailCtrl.text,
-        password: _passCtrl.text,
+        name: _nameCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+        password: _passCtrl.text.trim(),
       );
 
       try {
         await DatabaseHelper().registerUser(user);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Register successful')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Register successful')),
+        );
         Navigator.pushReplacementNamed(context, '/login');
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Email has been registered')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Email has been registered')),
+        );
       }
     }
   }
@@ -44,6 +61,7 @@ class RegisterPage extends StatelessWidget {
               TextFormField(
                 controller: _emailCtrl,
                 decoration: InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
                 validator: (val) => val == null || !val.contains('@') ? 'Invalid email' : null,
               ),
               TextFormField(
@@ -54,7 +72,7 @@ class RegisterPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () => _register(context),
+                onPressed: _register,
                 child: Text('Register'),
               ),
               TextButton(

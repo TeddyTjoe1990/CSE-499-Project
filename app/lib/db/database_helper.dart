@@ -1,22 +1,25 @@
-import 'package:path/path.dart';
+import 'package:app/main.dart';
+import 'package:app/models/user_model.dart';
 import 'package:sqflite/sqflite.dart';
-import '../models/user_model.dart';
+import 'package:path/path.dart';
 import '../models/transaction_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
-  static Database? _database;
 
   factory DatabaseHelper() => _instance;
 
   DatabaseHelper._internal();
 
+  static Database? _database;
+
   Future<Database> get database async {
-    _database ??= await _initDb();
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
     return _database!;
   }
 
-  Future<Database> _initDb() async {
+  Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'cashier_app.db');
 
@@ -25,55 +28,32 @@ class DatabaseHelper {
       version: 1,
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE users (
+          CREATE TABLE Transaksi (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            itemName TEXT NOT NULL,
-            quantity INTEGER NOT NULL,
-            price REAL NOT NULL,
-            date TEXT NOT NULL
+            itemName TEXT,
+            quantity INTEGER,
+            price REAL,
+            date TEXT
           )
         ''');
       },
     );
   }
 
-  // User methods
-  Future<int> registerUser(User user) async {
+  Future<void> insertTransaction(TransactionModel transaction, double change, List<Item> items) async {
     final db = await database;
-    return await db.insert('users', user.toMap());
+    await db.insert('Transaksi', transaction.toMap());
   }
 
-  Future<User?> getUser(String email, String password) async {
+  Future<List<TransactionModel>> getAllTransactions() async {
     final db = await database;
-    final result = await db.query(
-      'users',
-      where: 'email = ? AND password = ?',
-      whereArgs: [email, password],
-    );
-    if (result.isNotEmpty) {
-      return User.fromMap(result.first);
-    }
-    return null;
+    final List<Map<String, dynamic>> maps = await db.query('Transaksi', orderBy: 'date DESC');
+    return List.generate(maps.length, (i) {
+      return TransactionModel.fromMap(maps[i]);
+    });
   }
 
-  // Transaction methods
-  Future<int> insertTransaction(TransactionModel transaction) async {
-    final db = await database;
-    return await db.insert('transactions', transaction.toMap());
-  }
+  Future getUser(String trim, String trim2) async {}
 
-  Future<List<TransactionModel>> getTransactions() async {
-    final db = await database;
-    final result = await db.query('transactions');
-    return result.map((json) => TransactionModel.fromMap(json)).toList();
-  }
+  Future<void> registerUser(User user) async {}
 }

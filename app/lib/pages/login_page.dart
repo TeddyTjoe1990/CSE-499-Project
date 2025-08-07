@@ -11,17 +11,24 @@ class _LoginPageState extends State<LoginPage> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
 
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
+  }
+
   void _login() async {
     if (_formKey.currentState!.validate()) {
-      final user = await DatabaseHelper().getUser(_emailCtrl.text, _passCtrl.text);
-      
-      if (!mounted) return; 
+      final user = await DatabaseHelper().getUser(_emailCtrl.text.trim(), _passCtrl.text.trim());
+
+      if (!mounted) return;
 
       if (user != null) {
-        Navigator.pushReplacementNamed(context, '/home');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Welcome, ${user.name}')),
         );
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Incorrect email or password')),
@@ -43,6 +50,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: _emailCtrl,
                 decoration: InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
                 validator: (val) => val == null || !val.contains('@') ? 'Invalid email' : null,
               ),
               TextFormField(

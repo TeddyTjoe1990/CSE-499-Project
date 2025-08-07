@@ -25,11 +25,13 @@ class TransactionModel {
 
   factory TransactionModel.fromMap(Map<String, dynamic> map) {
     return TransactionModel(
-      id: map['id'],
-      itemName: map['itemName'],
-      quantity: map['quantity'],
-      price: map['price'],
-      date: map['date'],
+      id: map['id'] as int?,
+      itemName: map['itemName'] as String,
+      quantity: map['quantity'] as int,
+      price: map['price'] is int
+          ? (map['price'] as int).toDouble()
+          : map['price'] as double,
+      date: map['date'] as String,
     );
   }
 }
