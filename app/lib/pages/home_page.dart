@@ -1,5 +1,8 @@
+import 'package:app/db/database_helper.dart';
+import 'package:app/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
 
 class CashierHome extends StatefulWidget {
   @override
@@ -12,8 +15,10 @@ class _CashierHomeState extends State<CashierHome> {
   final quantityController = TextEditingController();
   final amountPaidController = TextEditingController();
 
-  num totalAmount = 0;
-  num changeAmount = 0;
+  final db = DatabaseHelper();
+
+  double totalAmount = 0;
+  double changeAmount = 0;
 
   final currencyFormatter = NumberFormat.currency(
     locale: 'en_US',
@@ -66,6 +71,16 @@ class _CashierHomeState extends State<CashierHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {
+            TransactionModel transaction = TransactionModel(precioTotal: totalAmount, cambio: changeAmount, items: shoppingList);
+            db.insertTransactionWithItems(transaction);
+          },
+          child: Text('Save'),
+        ),
+      ),
       appBar: AppBar(title: Text('Cashier')),
       resizeToAvoidBottomInset: true, // Avoid keyboard overlapping the content
       body: Padding(
