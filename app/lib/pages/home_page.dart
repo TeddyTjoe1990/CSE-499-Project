@@ -12,8 +12,8 @@ class _CashierHomeState extends State<CashierHome> {
   final quantityController = TextEditingController();
   final amountPaidController = TextEditingController();
 
-  num totalAmount = 0; // ubah ke num
-  num changeAmount = 0; // ubah ke num
+  num totalAmount = 0;
+  num changeAmount = 0;
 
   final currencyFormatter = NumberFormat.currency(
     locale: 'en_US',
@@ -67,36 +67,46 @@ class _CashierHomeState extends State<CashierHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Cashier')),
+      resizeToAvoidBottomInset: true, // Avoid keyboard overlapping the content
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: LayoutBuilder(
           builder: (context, constraints) {
             bool isWide = constraints.maxWidth > 600;
-            return isWide
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(flex: 1, child: buildCashierForm()),
-                      SizedBox(width: 16),
-                      Expanded(flex: 1, child: buildShoppingList(true)),
-                    ],
-                  )
-                : Column(
-                    children: [
-                      buildCashierForm(),
-                      SizedBox(height: 16),
-                      // gunakan SizedBox agar tinggi list tidak error
-                      SizedBox(height: 300, child: buildShoppingList(false)),
-                    ],
-                  );
+            if (isWide) {
+              // Wrap Row in SizedBox with limited height so Expanded works well
+              return SizedBox(
+                height: MediaQuery.of(context).size.height - kToolbarHeight - 32,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(flex: 1, child: buildCashierForm(isWide)),
+                    SizedBox(width: 16),
+                    Expanded(flex: 1, child: buildShoppingList(true)),
+                  ],
+                ),
+              );
+            } else {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    buildCashierForm(isWide),
+                    SizedBox(height: 16),
+                    SizedBox(height: 300, child: buildShoppingList(false)),
+                  ],
+                ),
+              );
+            }
           },
         ),
       ),
     );
   }
 
-  Widget buildCashierForm() {
+  Widget buildCashierForm(bool isWide) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextField(
           controller: itemNameController,
@@ -138,6 +148,8 @@ class _CashierHomeState extends State<CashierHome> {
     final listWidget = shoppingList.isEmpty
         ? Center(child: Text('No items yet'))
         : ListView.builder(
+            shrinkWrap: !expand,
+            physics: expand ? ClampingScrollPhysics() : NeverScrollableScrollPhysics(),
             itemCount: shoppingList.length,
             itemBuilder: (context, index) {
               final item = shoppingList[index];
@@ -154,16 +166,30 @@ class _CashierHomeState extends State<CashierHome> {
             },
           );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Shopping List',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 8),
-        expand ? Expanded(child: listWidget) : Expanded(child: listWidget),
-      ],
-    );
+    if (expand) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Shopping List',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          Flexible(child: listWidget),  // Flexible instead of Expanded here
+        ],
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Shopping List',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          listWidget,
+        ],
+      );
+    }
   }
 }
