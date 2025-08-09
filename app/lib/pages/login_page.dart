@@ -14,20 +14,33 @@ class _LoginPageState extends State<LoginPage> {
   void _login() async {
     if (_formKey.currentState!.validate()) {
       final user = await DatabaseHelper().getUser(_emailCtrl.text, _passCtrl.text);
-      
-      if (!mounted) return; 
+
+      if (!mounted) return;
 
       if (user != null) {
-        Navigator.pushReplacementNamed(context, '/home');
+        // Tampilkan SnackBar dulu, tunggu sebentar baru navigasi
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Welcome, ${user.name}')),
         );
+
+        await Future.delayed(Duration(seconds: 1));
+
+        if (!mounted) return;
+
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Incorrect email or password')),
         );
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -43,13 +56,15 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: _emailCtrl,
                 decoration: InputDecoration(labelText: 'Email'),
-                validator: (val) => val == null || !val.contains('@') ? 'Invalid email' : null,
+                validator: (val) =>
+                    val == null || !val.contains('@') ? 'Invalid email' : null,
               ),
               TextFormField(
                 controller: _passCtrl,
                 decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
-                validator: (val) => val == null || val.length < 6 ? 'Minimum 6 characters' : null,
+                validator: (val) =>
+                    val == null || val.length < 6 ? 'Minimum 6 characters' : null,
               ),
               SizedBox(height: 20),
               ElevatedButton(

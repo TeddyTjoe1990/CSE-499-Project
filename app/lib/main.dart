@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
-import 'pages/home_page.dart'; // <- cashier page
+import 'pages/home_page.dart'; // <- CashierHome page
 
 void main() => runApp(CashierApp());
 
@@ -16,7 +16,7 @@ class CashierApp extends StatelessWidget {
       routes: {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
-        '/home': (context) => CashierHome(), // 
+        '/home': (context) => CashierHome(),
       },
     );
   }
