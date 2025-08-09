@@ -6,15 +6,16 @@ void main() {
   runApp(const MainApp());
 }
 
-Item apple = Item("Apple", 1.50);
-Item bread = Item("Bread", 2.00);
+Item apple = Item("Apple", 1.50, quantity: 2);
+Item bread = Item("Bread", 2.00, quantity: 1);
 
 List<Item> items = [apple, bread];
 
 double totalPrice() {
   double total = 0.0;
   for (var item in items) {
-    total += item.price; // Asegúrate de castear el precio a double
+    total += item
+        .totalPrice; // Usa el nuevo método totalPrice que considera cantidad
   }
   return total;
 }
@@ -24,12 +25,14 @@ final myController = TextEditingController();
 class _MainAppState extends State<MainApp> {
   final itemNameController = TextEditingController();
   final itemPriceController = TextEditingController();
+  final quantityController = TextEditingController();
   double change = 0.0;
 
   @override
   void dispose() {
     itemNameController.dispose();
     itemPriceController.dispose();
+    quantityController.dispose();
     myController.dispose();
     super.dispose();
   }
@@ -109,6 +112,32 @@ class _MainAppState extends State<MainApp> {
                 height: 20,
               ),
               Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text("Quantity"),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                      child: TextField(
+                    controller: quantityController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: "Enter quantity (default: 1)",
+                      border: OutlineInputBorder(),
+                    ),
+                  )),
+                  SizedBox(
+                    width: 20,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -116,6 +145,7 @@ class _MainAppState extends State<MainApp> {
                     onPressed: () {
                       String itemName = itemNameController.text.trim();
                       String priceText = itemPriceController.text.trim();
+                      String quantityText = quantityController.text.trim();
 
                       if (itemName.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -132,15 +162,30 @@ class _MainAppState extends State<MainApp> {
                         return;
                       }
 
+                      int quantity = 1; // Default quantity
+                      if (quantityText.isNotEmpty) {
+                        int? parsedQuantity = int.tryParse(quantityText);
+                        if (parsedQuantity == null || parsedQuantity <= 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text("Please enter a valid quantity")),
+                          );
+                          return;
+                        }
+                        quantity = parsedQuantity;
+                      }
+
                       setState(() {
-                        items.add(Item(itemName, price));
+                        items.add(Item(itemName, price, quantity: quantity));
                         itemNameController.clear();
                         itemPriceController.clear();
+                        quantityController.clear();
                       });
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                            content: Text("$itemName added successfully!")),
+                            content: Text(
+                                "$quantity x $itemName added successfully!")),
                       );
                     },
                     child: Text("Add Item"),
@@ -162,12 +207,28 @@ class _MainAppState extends State<MainApp> {
                 margin: EdgeInsets.symmetric(horizontal: 10.0),
                 color: Colors.blue,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text("Item",
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
-                    Text("Price",
-                        style: TextStyle(fontSize: 20, color: Colors.white))
+                    Expanded(
+                        flex: 3,
+                        child: Text("Item",
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            textAlign: TextAlign.center)),
+                    Expanded(
+                        flex: 1,
+                        child: Text("Qty",
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            textAlign: TextAlign.center)),
+                    Expanded(
+                        flex: 2,
+                        child: Text("Price",
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            textAlign: TextAlign.center)),
+                    Expanded(
+                        flex: 2,
+                        child: Text("Total",
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            textAlign: TextAlign.center)),
+                    SizedBox(width: 48), // Space for delete button
                   ],
                 ),
               ),
@@ -176,19 +237,43 @@ class _MainAppState extends State<MainApp> {
                   int index = entry.key;
                   Item item = entry.value;
                   return Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10.0),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      padding: EdgeInsets.all(5.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Expanded(
-                            flex: 2,
-                            child:
-                                Text(item.name, style: TextStyle(fontSize: 25)),
+                            flex: 3,
+                            child: Text(item.name,
+                                style: TextStyle(fontSize: 18),
+                                textAlign: TextAlign.center),
                           ),
                           Expanded(
-                            child: Text("\$ " + item.price.toStringAsFixed(2),
+                            flex: 1,
+                            child: Text("${item.quantity}",
                                 style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.bold)),
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text("\$${item.price.toStringAsFixed(2)}",
+                                style: TextStyle(fontSize: 18),
+                                textAlign: TextAlign.center),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                                "\$${item.totalPrice.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green),
+                                textAlign: TextAlign.center),
                           ),
                           IconButton(
                             onPressed: () {
@@ -373,6 +458,7 @@ class _MainAppState extends State<MainApp> {
                         myController.clear();
                         itemNameController.clear();
                         itemPriceController.clear();
+                        quantityController.clear();
                         change = 0.0;
                       });
                       ScaffoldMessenger.of(context).showSnackBar(
