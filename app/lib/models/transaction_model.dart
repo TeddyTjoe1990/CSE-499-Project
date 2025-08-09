@@ -10,7 +10,7 @@ class TransactionModel {
     required this.itemName,
     required this.quantity,
     required this.price,
-    required this.date,
+    required this.date, required double total, required double change,
   });
 
   Map<String, dynamic> toMap() {
