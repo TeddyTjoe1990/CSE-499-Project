@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../db/database_helper.dart';
 import '../models/transaction_model.dart';
 import '../models/item.dart';
-import 'transaction_list_page.dart';  // Pastikan file ini ada untuk list transaksi
+import 'transaction_list_page.dart';
 
 class CashierPage extends StatefulWidget {
   @override
@@ -32,7 +33,8 @@ class _CashierPageState extends State<CashierPage> {
     }
 
     setState(() {
-      items.add(Item(name: name, price: price, quantity: qty));
+      // Panggil constructor Item dengan positional arguments
+      items.add(Item(name, price, qty));
     });
 
     itemController.clear();
@@ -68,9 +70,12 @@ class _CashierPageState extends State<CashierPage> {
     final now = DateTime.now().toIso8601String();
 
     final transaction = TransactionModel(
+      itemName: '',  // sesuaikan kalau perlu, ini placeholder karena kamu simpan banyak item
+      quantity: 0,
+      price: 0.0,
+      date: now,
       total: total,
       change: change,
-      date: now,
     );
 
     try {
@@ -123,7 +128,6 @@ class _CashierPageState extends State<CashierPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Input Item
             TextField(
               controller: itemController,
               decoration: InputDecoration(labelText: 'Item Name'),
@@ -146,7 +150,6 @@ class _CashierPageState extends State<CashierPage> {
 
             Divider(),
 
-            // List Items
             Expanded(
               child: ListView.builder(
                 itemCount: items.length,
@@ -172,7 +175,6 @@ class _CashierPageState extends State<CashierPage> {
 
             Divider(),
 
-            // Total and Payment
             Text('Total: \$${total.toStringAsFixed(2)}'),
             TextField(
               controller: paymentController,

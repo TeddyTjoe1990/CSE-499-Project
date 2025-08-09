@@ -3,5 +3,6 @@ class Item {
   double price;
   int quantity;
 
-  Item(this.name, this.price, this.quantity, {required String name});
+  // Constructor with positional parameters (tidak perlu named parameter tambahan)
+  Item(this.name, this.price, this.quantity);
 }

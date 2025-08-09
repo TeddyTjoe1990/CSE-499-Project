@@ -87,7 +87,17 @@ class _CashierHomePageState extends State<CashierHomePage> {
 
     try {
       double total = totalPrice();
-      await dbHelper.insertTransaction(total as TransactionModel, change, items);
+      // Buat objek TransactionModel dengan data yang lengkap
+      final transaction = TransactionModel(
+        itemName: 'Multiple Items', // Bisa disesuaikan
+        quantity: items.fold(0, (sum, item) => sum + item.quantity),
+        price: total,
+        date: DateTime.now().toIso8601String(),
+      );
+
+      // Panggil insertTransaction dengan parameter yang sesuai
+      // Misal insertTransaction(TransactionModel transaction, double change, List<Item> items)
+      await dbHelper.insertTransaction(transaction, change, items);
 
       showDialog(
         context: context,
@@ -176,7 +186,7 @@ class _CashierHomePageState extends State<CashierHomePage> {
                   return ListTile(
                     title: Text('${item.name} x${item.quantity}'),
                     subtitle:
-                        Text('Price: \$${item.price} - Subtotal: \$${(item.price * item.quantity).toStringAsFixed(2)}'),
+                        Text('Price: \$${item.price.toStringAsFixed(2)} - Subtotal: \$${(item.price * item.quantity).toStringAsFixed(2)}'),
                   );
                 },
               ),
