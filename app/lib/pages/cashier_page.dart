@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../db/database_helper.dart';
 import '../models/transaction_model.dart';
 import '../models/item.dart';
@@ -14,6 +13,7 @@ class _CashierPageState extends State<CashierPage> {
   final itemController = TextEditingController();
   final qtyController = TextEditingController();
   final priceController = TextEditingController();
+  final paymentController = TextEditingController();
 
   final dbHelper = DatabaseHelper();
 
@@ -33,7 +33,7 @@ class _CashierPageState extends State<CashierPage> {
     }
 
     setState(() {
-      // Panggil constructor Item dengan positional arguments
+      // Konstruktor Item dengan positional arguments
       items.add(Item(name, price, qty));
     });
 
@@ -68,13 +68,14 @@ class _CashierPageState extends State<CashierPage> {
     }
 
     final now = DateTime.now().toIso8601String();
+    final totalAmount = total;
 
     final transaction = TransactionModel(
-      itemName: '',  // sesuaikan kalau perlu, ini placeholder karena kamu simpan banyak item
-      quantity: 0,
-      price: 0.0,
+      itemName: 'Multiple Items',
+      quantity: items.fold(0, (sum, item) => sum + item.quantity),
+      price: totalAmount,
       date: now,
-      total: total,
+      total: totalAmount,
       change: change,
     );
 
@@ -88,6 +89,7 @@ class _CashierPageState extends State<CashierPage> {
       setState(() {
         items.clear();
         change = 0.0;
+        paymentController.clear();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -95,8 +97,6 @@ class _CashierPageState extends State<CashierPage> {
       );
     }
   }
-
-  final paymentController = TextEditingController();
 
   @override
   void dispose() {

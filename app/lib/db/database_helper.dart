@@ -1,4 +1,4 @@
-import 'package:app/main.dart';
+import 'package:app/models/item.dart';
 import 'package:app/models/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';

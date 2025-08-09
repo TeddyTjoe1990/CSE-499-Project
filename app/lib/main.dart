@@ -1,17 +1,10 @@
 import 'package:app/db/database_helper.dart';
+import 'package:app/models/item.dart';
 import 'package:app/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(CashierApp());
-}
-
-class Item {
-  final String name;
-  final double price;
-  final int quantity;
-
-  Item({required this.name, required this.price, required this.quantity});
 }
 
 class CashierApp extends StatelessWidget {
@@ -32,10 +25,10 @@ class CashierHomePage extends StatefulWidget {
 
 class _CashierHomePageState extends State<CashierHomePage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController itemNameController = TextEditingController();
-  final TextEditingController itemPriceController = TextEditingController();
-  final TextEditingController itemQuantityController = TextEditingController();
-  final TextEditingController paymentController = TextEditingController();
+  final itemNameController = TextEditingController();
+  final itemPriceController = TextEditingController();
+  final itemQuantityController = TextEditingController();
+  final paymentController = TextEditingController();
 
   List<Item> items = [];
   double change = 0.0;
@@ -61,7 +54,7 @@ class _CashierHomePageState extends State<CashierHomePage> {
       final quantity = int.parse(itemQuantityController.text);
 
       setState(() {
-        items.add(Item(name: name, price: price, quantity: quantity));
+        items.add(Item(name, price, quantity));
       });
 
       itemNameController.clear();
@@ -87,16 +80,16 @@ class _CashierHomePageState extends State<CashierHomePage> {
 
     try {
       double total = totalPrice();
-      // Buat objek TransactionModel dengan data yang lengkap
+
       final transaction = TransactionModel(
-        itemName: 'Multiple Items', // Bisa disesuaikan
+        itemName: 'Multiple Items',
         quantity: items.fold(0, (sum, item) => sum + item.quantity),
         price: total,
         date: DateTime.now().toIso8601String(),
+        total: total,
+        change: change,
       );
 
-      // Panggil insertTransaction dengan parameter yang sesuai
-      // Misal insertTransaction(TransactionModel transaction, double change, List<Item> items)
       await dbHelper.insertTransaction(transaction, change, items);
 
       showDialog(
@@ -138,11 +131,9 @@ class _CashierHomePageState extends State<CashierHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Simple Cashier'),
-      ),
+      appBar: AppBar(title: Text('Simple Cashier')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             Form(
@@ -170,10 +161,7 @@ class _CashierHomePageState extends State<CashierHomePage> {
                         value!.isEmpty ? 'Enter quantity' : null,
                   ),
                   SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: addItem,
-                    child: Text('Add Item'),
-                  ),
+                  ElevatedButton(onPressed: addItem, child: Text('Add Item')),
                 ],
               ),
             ),
@@ -181,12 +169,12 @@ class _CashierHomePageState extends State<CashierHomePage> {
             Expanded(
               child: ListView.builder(
                 itemCount: items.length,
-                itemBuilder: (_, index) {
-                  final item = items[index];
+                itemBuilder: (_, i) {
+                  final item = items[i];
                   return ListTile(
                     title: Text('${item.name} x${item.quantity}'),
-                    subtitle:
-                        Text('Price: \$${item.price.toStringAsFixed(2)} - Subtotal: \$${(item.price * item.quantity).toStringAsFixed(2)}'),
+                    subtitle: Text(
+                        'Price: \$${item.price.toStringAsFixed(2)} - Subtotal: \$${(item.price * item.quantity).toStringAsFixed(2)}'),
                   );
                 },
               ),

@@ -1,8 +1,7 @@
 class Item {
-  String name;
-  double price;
-  int quantity;
+  final String name;
+  final double price;
+  final int quantity;
 
-  // Constructor with positional parameters (tidak perlu named parameter tambahan)
   Item(this.name, this.price, this.quantity);
 }

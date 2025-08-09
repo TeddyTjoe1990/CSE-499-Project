@@ -4,13 +4,17 @@ class TransactionModel {
   final int quantity;
   final double price;
   final String date;
+  final double total;
+  final double change;
 
   TransactionModel({
     this.id,
     required this.itemName,
     required this.quantity,
     required this.price,
-    required this.date, required double total, required double change,
+    required this.date,
+    required this.total,
+    required this.change,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +24,8 @@ class TransactionModel {
       'quantity': quantity,
       'price': price,
       'date': date,
+      'total': total,
+      'change': change,
     };
   }
 
@@ -32,6 +38,12 @@ class TransactionModel {
           ? (map['price'] as int).toDouble()
           : map['price'] as double,
       date: map['date'] as String,
+      total: map['total'] is int
+          ? (map['total'] as int).toDouble()
+          : map['total'] as double,
+      change: map['change'] is int
+          ? (map['change'] as int).toDouble()
+          : map['change'] as double,
     );
   }
 }
