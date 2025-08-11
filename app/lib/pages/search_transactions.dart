@@ -1,3 +1,4 @@
+import 'package:app/db/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import '../db/database_helper.dart';
 import '../models/models.dart';
@@ -8,6 +9,8 @@ class TransactionSearchPage extends StatefulWidget {
 }
 
 class _TransactionSearchPageState extends State<TransactionSearchPage> {
+  final AuthService _authService = AuthService();
+
   final dbHelper = DatabaseHelper();
 
   TextEditingController itemNameController = TextEditingController();
@@ -66,7 +69,19 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Buscar Transacciones')),
+      appBar: AppBar(
+        title: Text('Buscar Transacciones'),
+        actions: [
+          // Este es el botón de "Cerrar Sesión"
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              // Llama al método de logout de tu servicio.
+              _authService.logout(context);
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -96,10 +111,7 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
               readOnly: true,
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _search,
-              child: Text('Buscar'),
-            ),
+            ElevatedButton(onPressed: _search, child: Text('Buscar')),
             SizedBox(height: 16),
             isLoading
                 ? CircularProgressIndicator()
@@ -117,8 +129,12 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
                                 children: tx.items.map((item) {
                                   return ListTile(
                                     title: Text(item['nombre']),
-                                    subtitle: Text('Cantidad: ${item['cantidad']}'),
-                                    trailing: Text('\$${(item['precio'] as double).toStringAsFixed(2)}'),
+                                    subtitle: Text(
+                                      'Cantidad: ${item['cantidad']}',
+                                    ),
+                                    trailing: Text(
+                                      '\$${(item['precio'] as double).toStringAsFixed(2)}',
+                                    ),
                                   );
                                 }).toList(),
                               );

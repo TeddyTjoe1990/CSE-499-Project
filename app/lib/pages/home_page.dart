@@ -1,6 +1,7 @@
 import 'package:app/db/database_helper.dart';
 import 'package:app/db/services/auth_service.dart';
 import 'package:app/models/models.dart';
+import 'package:app/pages/transaction_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -70,21 +71,80 @@ class _CashierHomeState extends State<CashierHome> {
     setState(() {});
   }
 
+  Future<void> _saveTransaction() async {
+    // Si la lista de compras está vacía, no hacemos nada
+    if (shoppingList.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se puede guardar una transacción vacía.')),
+      );
+      return;
+    }
+
+    // Aquí mostramos un indicador de carga (opcional)
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Guardando transacción...')));
+
+    try {
+      TransactionModel transaction = TransactionModel(
+        precioTotal: totalAmount,
+        cambio: changeAmount,
+        items: shoppingList,
+        fechaTransaccion: DateTime.now().toIso8601String(),
+      );
+
+      // La clave es usar 'await' para esperar la respuesta de la base de datos
+      await db.insertTransactionWithItems(transaction);
+
+      // Si llegamos aquí, la operación fue exitosa
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Transacción guardada con éxito.')),
+      );
+
+      // Limpiamos los campos y la lista para la siguiente transacción
+      setState(() {
+        shoppingList.clear();
+        totalAmount = 0;
+        changeAmount = 0;
+        amountPaidController.clear();
+      });
+    } catch (e) {
+      // Si ocurre un error, lo capturamos aquí
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al guardar la transacción: $e')),
+      );
+      print('Error al guardar la transacción: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () {
-            TransactionModel transaction = TransactionModel(
-              precioTotal: totalAmount,
-              cambio: changeAmount,
-              items: shoppingList,
-            );
-            db.insertTransactionWithItems(transaction);
-          },
-          child: Text('Save'),
+        // CAMBIO: Usamos una columna para los botones
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ElevatedButton(
+              onPressed: _saveTransaction,
+              child: Text('Save'),
+            ),
+            SizedBox(height: 10),
+            // NUEVO BOTÓN: para ir a la lista de transacciones
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TransactionListPage(),
+                  ),
+                );
+              },
+              child: Text('View Transactions'),
+            ),
+          ],
         ),
       ),
       appBar: AppBar(

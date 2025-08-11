@@ -2,6 +2,7 @@ class TransactionModel {
   int? id;
   double precioTotal;
   double cambio;
+  String fechaTransaccion;
   List<Map<String, dynamic>> items;
 
   TransactionModel({
@@ -9,6 +10,7 @@ class TransactionModel {
     required this.precioTotal,
     required this.cambio,
     required this.items,
+    required this.fechaTransaccion,
   });
 }
 

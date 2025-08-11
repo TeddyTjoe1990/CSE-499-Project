@@ -22,7 +22,8 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version:
+          2, // Si ya tienes una versión, incrementa a 3 para forzar la actualización
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE users (
@@ -33,12 +34,13 @@ class DatabaseHelper {
         )
       ''');
 
-        // Corrección aquí: Se usa "transaction" para escapar la palabra reservada
+        // CAMBIO 1: Añadir el campo fecha_transaccion a la tabla "transaction"
         await db.execute('''
         CREATE TABLE "transaction" (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           precio_total REAL DEFAULT 0,
-          cambio REAL DEFAULT 0
+          cambio REAL DEFAULT 0,
+          fecha_transaccion TEXT NOT NULL
         )
       ''');
 
@@ -118,20 +120,22 @@ class DatabaseHelper {
   Future<void> insertTransactionWithItems(TransactionModel transaction) async {
     final db = await database;
 
+    // Usamos una transacción para asegurarnos de que todo se guarde o nada se guarde.
     await db.transaction((txn) async {
-      // 1. Insertar la transacción y obtener el id generado
-      int transactionId = await txn.insert('transaction', {
+      // 1. Insertamos la transacción principal
+      final int transactionId = await txn.insert('"transaction"', {
         'precio_total': transaction.precioTotal,
         'cambio': transaction.cambio,
+        'fecha_transaccion': transaction.fechaTransaccion,
       });
 
-      // 2. Insertar los items con el transaction_id
+      // 2. Insertamos cada ítem con el ID de la transacción principal
       for (var item in transaction.items) {
         await txn.insert('item', {
           'transaction_id': transactionId,
-          'nombre': item['nombre'],
-          'precio': item['precio'],
-          'cantidad': item['cantidad'],
+          'nombre': item['name'],
+          'precio': item['price'],
+          'cantidad': item['quantity'],
         });
       }
     });
@@ -149,29 +153,28 @@ class DatabaseHelper {
   }) async {
     final db = await database;
 
-    // Consulta básica para traer IDs de transacciones según filtros
     String query = '''
     SELECT DISTINCT t.*
-    FROM transaction t
+    FROM "transaction" t
     LEFT JOIN item i ON t.id = i.transaction_id
     WHERE 1=1
-  ''';
+    ''';
 
     List<dynamic> args = [];
 
-    if (itemName != null) {
+    if (itemName != null && itemName.isNotEmpty) {
       query += ' AND i.nombre LIKE ?';
       args.add('%$itemName%');
     }
 
-    if (date != null) {
-      // Asumiendo que la tabla transaction tenga columna fecha en formato texto YYYY-MM-DD
-      query += ' AND t.fecha = ?';
-      args.add(date);
+    if (date != null && date.isNotEmpty) {
+      // CAMBIO 1: Usar el nombre de columna correcto 'fecha_transaccion'
+      // y el operador LIKE para buscar por fecha (por ejemplo, '2023-10-27%')
+      query += ' AND t.fecha_transaccion LIKE ?';
+      args.add('$date%');
     }
 
     final transactionMaps = await db.rawQuery(query, args);
-
     List<TransactionModel> transactions = [];
 
     for (var txMap in transactionMaps) {
@@ -187,23 +190,21 @@ class DatabaseHelper {
           precioTotal: (txMap['precio_total'] as num).toDouble(),
           cambio: (txMap['cambio'] as num).toDouble(),
           items: itemMaps,
+          // CAMBIO 2: Leer el valor del campo 'fecha_transaccion' del mapa y pasarlo al modelo
+          fechaTransaccion: txMap['fecha_transaccion'] as String,
         ),
       );
     }
-
     return transactions;
   }
 
   Future<List<TransactionModel>> getTransactions() async {
     final db = await database;
 
-    // 1. Traer todas las transacciones
-    final transactionMaps = await db.query('transaction');
-
+    final transactionMaps = await db.query('"transaction"');
     List<TransactionModel> transactions = [];
 
     for (var txMap in transactionMaps) {
-      // 2. Traer los items para cada transacción
       final itemMaps = await db.query(
         'item',
         where: 'transaction_id = ?',
@@ -216,10 +217,11 @@ class DatabaseHelper {
           precioTotal: (txMap['precio_total'] as num).toDouble(),
           cambio: (txMap['cambio'] as num).toDouble(),
           items: itemMaps,
+          // CAMBIO 3: Leer el valor del campo 'fecha_transaccion' del mapa y pasarlo al modelo
+          fechaTransaccion: txMap['fecha_transaccion'] as String,
         ),
       );
     }
-
     return transactions;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:app/db/database_helper.dart';
+import 'package:app/pages/search_transactions.dart';
 import 'package:app/pages/transaction_list_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
@@ -24,7 +25,8 @@ class CashierApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/home': (context) => CashierHome(),
-        '/transaction_list': (context) => TransactionListPage()
+        '/transaction_list': (context) => TransactionListPage(),
+        '/search_transactions': (context) => TransactionSearchPage(),
       },
     );
   }
