@@ -1,8 +1,8 @@
 import 'package:app/db/database_helper.dart';
+import 'package:app/db/services/auth_service.dart';
 import 'package:app/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqflite.dart';
 
 class CashierHome extends StatefulWidget {
   @override
@@ -10,6 +10,8 @@ class CashierHome extends StatefulWidget {
 }
 
 class _CashierHomeState extends State<CashierHome> {
+  final AuthService _authService = AuthService();
+
   final itemNameController = TextEditingController();
   final unitPriceController = TextEditingController();
   final quantityController = TextEditingController();
@@ -75,13 +77,30 @@ class _CashierHomeState extends State<CashierHome> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
-            TransactionModel transaction = TransactionModel(precioTotal: totalAmount, cambio: changeAmount, items: shoppingList);
+            TransactionModel transaction = TransactionModel(
+              precioTotal: totalAmount,
+              cambio: changeAmount,
+              items: shoppingList,
+            );
             db.insertTransactionWithItems(transaction);
           },
           child: Text('Save'),
         ),
       ),
-      appBar: AppBar(title: Text('Cashier')),
+      appBar: AppBar(
+        title: Text('Cashier'),
+        actions: [
+          // Este es el botón de "Cerrar Sesión"
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              // Llama al método de logout de tu servicio.
+              _authService.logout(context);
+            },
+          ),
+        ],
+      ),
+
       resizeToAvoidBottomInset: true, // Avoid keyboard overlapping the content
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -89,26 +108,23 @@ class _CashierHomeState extends State<CashierHome> {
           builder: (context, constraints) {
             bool isWide = constraints.maxWidth > 600;
             if (isWide) {
-              // Wrap Row in SizedBox with limited height so Expanded works well
-              return SizedBox(
-                height: MediaQuery.of(context).size.height - kToolbarHeight - 32,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(flex: 1, child: buildCashierForm(isWide)),
-                    SizedBox(width: 16),
-                    Expanded(flex: 1, child: buildShoppingList(true)),
-                  ],
-                ),
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(flex: 1, child: buildCashierForm()),
+                  SizedBox(width: 16),
+                  Expanded(flex: 1, child: buildShoppingList()),
+                ],
               );
             } else {
+              // Corrección para pantallas angostas
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    buildCashierForm(isWide),
+                    buildCashierForm(),
                     SizedBox(height: 16),
-                    SizedBox(height: 300, child: buildShoppingList(false)),
+                    buildShoppingList(), // Eliminamos la altura fija
                   ],
                 ),
               );
@@ -119,7 +135,7 @@ class _CashierHomeState extends State<CashierHome> {
     );
   }
 
-  Widget buildCashierForm(bool isWide) {
+  Widget buildCashierForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -159,12 +175,14 @@ class _CashierHomeState extends State<CashierHome> {
     );
   }
 
-  Widget buildShoppingList(bool expand) {
+  Widget buildShoppingList() {
     final listWidget = shoppingList.isEmpty
         ? Center(child: Text('No items yet'))
         : ListView.builder(
-            shrinkWrap: !expand,
-            physics: expand ? ClampingScrollPhysics() : NeverScrollableScrollPhysics(),
+            // shrinkWrap: true y NeverScrollableScrollPhysics ya no son necesarios
+            // porque el padre (SingleChildScrollView) se encarga del scroll
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: shoppingList.length,
             itemBuilder: (context, index) {
               final item = shoppingList[index];
@@ -181,30 +199,16 @@ class _CashierHomeState extends State<CashierHome> {
             },
           );
 
-    if (expand) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Shopping List',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          Flexible(child: listWidget),  // Flexible instead of Expanded here
-        ],
-      );
-    } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Shopping List',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          listWidget,
-        ],
-      );
-    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Shopping List',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 8),
+        listWidget,
+      ],
+    );
   }
 }

@@ -1,10 +1,16 @@
+import 'package:app/db/database_helper.dart';
 import 'package:app/pages/transaction_list_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
 import 'pages/home_page.dart'; // <- CashierHome page
 
-void main() => runApp(CashierApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await DatabaseHelper().verificarTablasYColumnas();
+  runApp(CashierApp());
+}
 
 class CashierApp extends StatelessWidget {
   @override

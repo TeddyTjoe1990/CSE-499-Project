@@ -25,51 +25,69 @@ class DatabaseHelper {
       version: 2,
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-          )
-        ''');
+        CREATE TABLE users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          email TEXT UNIQUE NOT NULL,
+          password TEXT NOT NULL
+        )
+      ''');
+
+        // Corrección aquí: Se usa "transaction" para escapar la palabra reservada
+        await db.execute('''
+        CREATE TABLE "transaction" (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          precio_total REAL DEFAULT 0,
+          cambio REAL DEFAULT 0
+        )
+      ''');
 
         await db.execute('''
-          CREATE TABLE transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            itemName TEXT NOT NULL,
-            quantity INTEGER NOT NULL,
-            price REAL NOT NULL,
-            date TEXT NOT NULL
-          )
-        ''');
-      },
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) {
-          // Eliminamos tabla transaction (ojo con los datos)
-          await db.execute('DROP TABLE IF EXISTS transaction');
-          // Creamos tabla transaction con nueva estructura
-          await db.execute('''
-          CREATE TABLE transaction (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            precio_total REAL DEFAULT 0,
-            cambio REAL DEFAULT 0
-          )
-        ''');
-
-          // Creamos tabla item si no existe (o también podrías usar DROP y CREATE si querés resetear)
-          await db.execute('''
-          CREATE TABLE IF NOT EXISTS item (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            transaction_id INTEGER NOT NULL,
-            nombre TEXT NOT NULL,
-            precio REAL NOT NULL,
-            cantidad INTEGER NOT NULL,
-            FOREIGN KEY (transaction_id) REFERENCES transaction(id) ON DELETE CASCADE
-          )
-        ''');
-        }
+        CREATE TABLE item (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          transaction_id INTEGER NOT NULL,
+          nombre TEXT NOT NULL,
+          precio REAL NOT NULL,
+          cantidad INTEGER NOT NULL,
+          FOREIGN KEY (transaction_id) REFERENCES "transaction"(id) ON DELETE CASCADE
+        )
+      ''');
       },
     );
+  }
+
+  Future<void> verificarTablasYColumnas() async {
+    // Primero obtenemos la instancia de la base de datos de forma correcta
+    final db = await DatabaseHelper().database;
+
+    // 1️⃣ Obtener todas las tablas de usuario (ignora las internas de SQLite)
+    // Ahora la consulta también escapará los nombres de tablas si es necesario.
+    List<Map<String, dynamic>> tablas = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+    );
+
+    for (var t in tablas) {
+      // Escapamos el nombre de la tabla con comillas dobles para que
+      // PRAGMA lo reconozca correctamente.
+      String nombreTabla = t['name'];
+      String nombreTablaEscapado = '"$nombreTabla"';
+
+      print("\n📂 Tabla: $nombreTabla");
+
+      // 2️⃣ Obtener columnas de esa tabla
+      // Usamos el nombre de la tabla escapado en la consulta PRAGMA.
+      List<Map<String, dynamic>> columnas = await db.rawQuery(
+        "PRAGMA table_info($nombreTablaEscapado)",
+      );
+
+      for (var col in columnas) {
+        print(
+          "   📌 ${col['name']} (${col['type']})"
+          "${col['notnull'] == 1 ? ' NOT NULL' : ''}"
+          "${col['pk'] == 1 ? ' PRIMARY KEY' : ''}",
+        );
+      }
+    }
   }
 
   // User methods
