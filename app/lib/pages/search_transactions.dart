@@ -26,6 +26,7 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
 
   DateTime? selectedDate;
 
+  // Code for searching transactions by name and date
   Future<void> _search() async {
     setState(() {
       isLoading = true;

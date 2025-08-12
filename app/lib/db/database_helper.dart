@@ -157,6 +157,7 @@ class DatabaseHelper {
   //   return result.map((json) => TransactionModel.fromMap(json)).toList();
   // }
 
+  // Code to search transactions by name and date
   Future<List<TransactionModel>> searchTransactions({
     String? itemName,
     String? date,
@@ -208,6 +209,7 @@ class DatabaseHelper {
     return transactions;
   }
 
+  // Code to get all transactions
   Future<List<TransactionModel>> getTransactions() async {
     final db = await database;
 
