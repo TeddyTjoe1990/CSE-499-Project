@@ -69,6 +69,26 @@ If you have multiple devices connected, you can specify which one to use with th
 flutter run -d <device_id>
 ```
 
+## Usage
+
+To start using the app, follow these two simple steps:
+
+1. User Registration:
+
+- When you first open the app, you will be redirected to the Login screen.
+
+- Click on the "Register" link to navigate to the registration screen.
+
+- Enter a name, a valid email address and a password.
+
+- Click the "Register" button to create your account. Once the registration is successful, the app will take you back to the Login screen.
+
+2. User Login:
+
+- On the Login screen, enter the credentials (email and password) you just used to register.
+
+- Click the "Login" button. If the credentials are correct, you will be granted access and taken to the app's main screen.
+
 ## Project Structure
 
 This project follows a modular and organized file structure.
