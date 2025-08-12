@@ -25,29 +25,25 @@ To run this project in your development environment, make sure you have the foll
 
 Follow these steps to get the application up and running on your local machine.
 
-1. Clone the Repository
-Open your terminal or Git Bash and run the following command:
+1. Clone the Repository - Open your terminal or Git Bash and run the following command:
 
 ```
 git clone --branch FinalSubmission --single-branch https://github.com/TeddyTjoe1990/CSE-499-Project.git
 ```
 
-2. Navigate to the Project Directory
-Change into the project folder you just cloned:
+2. Navigate to the Project Directory - Change into the project folder you just cloned:
 
 ```
 cd CSE-499-Project
 ```
 
-3. Install Dependencies
-Run flutter pub get to install all the packages and dependencies defined in the pubspec.yaml file.
+3. Install Dependencies - Run flutter pub get to install all the packages and dependencies defined in the pubspec.yaml file.
 
 ```
 flutter pub get
 ```
 
-4. Android Configuration
-If this is the first time you are setting up a Flutter project for Android, you might need to accept the Android SDK licenses.
+4. Android Configuration - If this is the first time you are setting up a Flutter project for Android, you might need to accept the Android SDK licenses.
 
 ```
 flutter doctor --android-licenses
@@ -61,8 +57,7 @@ flutter doctor
 
 You should see an output similar to this.
 
-5. Run the Application
-With an Android device or emulator connected and active, you can run the application with a single command:
+5. Run the Application - With an Android device or emulator connected and active, you can run the application with a single command:
 
 ```
 flutter run
