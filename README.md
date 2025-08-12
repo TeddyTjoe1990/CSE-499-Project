@@ -36,7 +36,7 @@ git clone --branch FinalSubmission --single-branch https://github.com/TeddyTjoe1
 Change into the project folder you just cloned:
 
 ```
-cd your-repo
+cd CSE-499-Project
 ```
 
 3. Install Dependencies
