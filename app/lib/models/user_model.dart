@@ -1,3 +1,5 @@
+// Code for users (model)
+
 class User {
   final int? id;
   final String name;

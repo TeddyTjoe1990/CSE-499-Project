@@ -5,10 +5,14 @@ import '../db/database_helper.dart';
 import '../models/models.dart';
 
 class TransactionListPage extends StatelessWidget {
+
+  // Authentication
   final AuthService _authService = AuthService();
 
+  // Database instance
   final dbHelper = DatabaseHelper();
 
+  // Transaction List Page Scaffold
   @override
   Widget build(BuildContext context) {
     return Scaffold(

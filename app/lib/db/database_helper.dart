@@ -4,6 +4,8 @@ import '../models/user_model.dart';
 import '../models/models.dart';
 
 class DatabaseHelper {
+
+  //Database instance
   static final DatabaseHelper _instance = DatabaseHelper._internal();
 
   factory DatabaseHelper() => _instance;
@@ -25,6 +27,7 @@ class DatabaseHelper {
       path,
       version:
           1, // Si ya tienes una versión, incrementa a 3 para forzar la actualización
+      // Code to initialize the database when it does not exist.
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE users (

@@ -1,3 +1,5 @@
+// Code for transactions (model)
+
 class TransactionModel {
   int? id;
   double precioTotal;
@@ -14,6 +16,7 @@ class TransactionModel {
   });
 }
 
+// Code for items (model)
 class ItemModel {
   int? id;
   String nombre;

@@ -9,13 +9,18 @@ class TransactionSearchPage extends StatefulWidget {
 }
 
 class _TransactionSearchPageState extends State<TransactionSearchPage> {
+
+  // Authentication
   final AuthService _authService = AuthService();
 
+  // Database instance
   final dbHelper = DatabaseHelper();
 
+  // Name and Date of the transaction state
   TextEditingController itemNameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
 
+  // Filtered transactions
   List<TransactionModel> filteredTransactions = [];
   bool isLoading = false;
 
@@ -43,6 +48,7 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
     });
   }
 
+  // Show a date picker
   Future<void> _pickDate() async {
     DateTime now = DateTime.now();
     final picked = await showDatePicker(
@@ -59,6 +65,7 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
     }
   }
 
+  // Destroying the state
   @override
   void dispose() {
     itemNameController.dispose();
@@ -66,6 +73,7 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
     super.dispose();
   }
 
+  // Search Page Scaffold
   @override
   Widget build(BuildContext context) {
     return Scaffold(

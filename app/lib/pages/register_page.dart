@@ -3,11 +3,16 @@ import '../db/database_helper.dart';
 import '../models/user_model.dart';
 
 class RegisterPage extends StatelessWidget {
+
+  // Form
   final _formKey = GlobalKey<FormState>();
+
+  // Name, Email and Password State
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
 
+  // Code for register
   void _register(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       final user = User(
@@ -26,6 +31,7 @@ class RegisterPage extends StatelessWidget {
     }
   }
 
+  // Register Page Scaffold
   @override
   Widget build(BuildContext context) {
     return Scaffold(

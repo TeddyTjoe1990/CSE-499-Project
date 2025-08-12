@@ -11,8 +11,11 @@ class CashierHome extends StatefulWidget {
 }
 
 class _CashierHomeState extends State<CashierHome> {
+
+  // Authentication
   final AuthService _authService = AuthService();
 
+  // TextEdit State
   final itemNameController = TextEditingController();
   final unitPriceController = TextEditingController();
   final quantityController = TextEditingController();
@@ -20,16 +23,20 @@ class _CashierHomeState extends State<CashierHome> {
 
   final db = DatabaseHelper();
 
+  // Total and change amount
   double totalAmount = 0;
   double changeAmount = 0;
 
+  // Currency formatter
   final currencyFormatter = NumberFormat.currency(
     locale: 'en_US',
     symbol: '\$',
   );
 
+  // Cart
   List<Map<String, dynamic>> shoppingList = [];
 
+  // Code for adding items
   void addItem() {
     final itemName = itemNameController.text.trim();
     final unitPrice = num.tryParse(unitPriceController.text) ?? 0;
@@ -50,6 +57,7 @@ class _CashierHomeState extends State<CashierHome> {
     }
   }
 
+  // Code to remove items
   void removeItem(int index) {
     setState(() {
       shoppingList.removeAt(index);
@@ -57,6 +65,7 @@ class _CashierHomeState extends State<CashierHome> {
     });
   }
 
+  // Code to calculate total based in items price and quantity
   void calculateTotal() {
     totalAmount = 0;
     for (var item in shoppingList) {
@@ -71,6 +80,7 @@ class _CashierHomeState extends State<CashierHome> {
     setState(() {});
   }
 
+  // Code for save the current transaction
   Future<void> _saveTransaction() async {
     // Si la lista de compras está vacía, no hacemos nada
     if (shoppingList.isEmpty) {
@@ -117,6 +127,7 @@ class _CashierHomeState extends State<CashierHome> {
     }
   }
 
+  // Home Page Scaffold
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,6 +206,7 @@ class _CashierHomeState extends State<CashierHome> {
     );
   }
 
+  // Form for entering items with their prices and quantities
   Widget buildCashierForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -235,6 +247,7 @@ class _CashierHomeState extends State<CashierHome> {
     );
   }
 
+  // Code for displaying the shopping list
   Widget buildShoppingList() {
     final listWidget = shoppingList.isEmpty
         ? Center(child: Text('No items yet'))

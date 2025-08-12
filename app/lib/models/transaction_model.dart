@@ -1,3 +1,5 @@
+// Code for transactions (model)
+
 class TransactionModel {
   final int? id;
   final String itemName;

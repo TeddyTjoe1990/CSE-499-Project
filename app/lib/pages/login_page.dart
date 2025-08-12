@@ -7,10 +7,15 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  // Form
   final _formKey = GlobalKey<FormState>();
+
+  // Email and password states
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
 
+  // Login code
   void _login() async {
     if (_formKey.currentState!.validate()) {
       final user = await DatabaseHelper().getUser(_emailCtrl.text, _passCtrl.text);
@@ -36,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  // Code for destroy the state after using it
   @override
   void dispose() {
     _emailCtrl.dispose();
@@ -43,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  // Login Page Scaffold
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -7,6 +7,8 @@ import 'pages/register_page.dart';
 import 'pages/home_page.dart'; // <- CashierHome page
 
 void main() async {
+
+  // Ensure all widgets are initialized.
   WidgetsFlutterBinding.ensureInitialized();
 
   // Asegúrate de que la base de datos se abra o se cree antes de que la UI se renderice.
@@ -20,6 +22,8 @@ void main() async {
   runApp(CashierApp());
 }
 
+
+// Main widget
 class CashierApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -28,6 +32,7 @@ class CashierApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.teal),
       initialRoute: '/login',
       debugShowCheckedModeBanner: false,
+      // Routes for app pages.
       routes: {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
