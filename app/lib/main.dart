@@ -9,6 +9,13 @@ import 'pages/home_page.dart'; // <- CashierHome page
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Asegúrate de que la base de datos se abra o se cree antes de que la UI se renderice.
+  await DatabaseHelper().database;
+
+  // El resto de tu código
+  final users = await DatabaseHelper().getAllUsers();
+  print('Número de usuarios en la base de datos: ${users.length}');
+
   await DatabaseHelper().verificarTablasYColumnas();
   runApp(CashierApp());
 }

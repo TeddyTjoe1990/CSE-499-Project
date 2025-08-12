@@ -5,11 +5,12 @@ import '../models/models.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
-  static Database? _database;
 
   factory DatabaseHelper() => _instance;
 
   DatabaseHelper._internal();
+
+  static Database? _database;
 
   Future<Database> get database async {
     _database ??= await _initDb();
@@ -23,7 +24,7 @@ class DatabaseHelper {
     return await openDatabase(
       path,
       version:
-          2, // Si ya tienes una versión, incrementa a 3 para forzar la actualización
+          1, // Si ya tienes una versión, incrementa a 3 para forzar la actualización
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE users (
@@ -56,6 +57,12 @@ class DatabaseHelper {
       ''');
       },
     );
+  }
+
+  Future<List<User>> getAllUsers() async {
+    final db = await database;
+    final result = await db.query('users');
+    return result.map((json) => User.fromMap(json)).toList();
   }
 
   Future<void> verificarTablasYColumnas() async {

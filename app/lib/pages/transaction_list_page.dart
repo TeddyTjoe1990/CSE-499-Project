@@ -57,12 +57,12 @@ class TransactionListPage extends StatelessWidget {
               final tx = transactions[index];
               return ExpansionTile(
                 title: Text(
-                  'Total: \$${tx.precioTotal.toStringAsFixed(2)} - Cambio: \$${tx.cambio.toStringAsFixed(2)}',
+                  'Total: \$${tx.precioTotal.toStringAsFixed(2)} - Change: \$${tx.cambio.toStringAsFixed(2)}',
                 ),
                 children: tx.items.map((item) {
                   return ListTile(
                     title: Text(item['nombre']),
-                    subtitle: Text('Cantidad: ${item['cantidad']}'),
+                    subtitle: Text('Quantity: ${item['cantidad']}'),
                     trailing: Text(
                       '\$${(item['precio'] as double).toStringAsFixed(2)}',
                     ),

@@ -70,7 +70,7 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Buscar Transacciones'),
+        title: Text('Search Transactions'),
         actions: [
           // Este es el botón de "Cerrar Sesión"
           IconButton(
@@ -89,7 +89,7 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
             TextField(
               controller: itemNameController,
               decoration: InputDecoration(
-                labelText: 'Buscar por nombre de ítem',
+                labelText: 'Search by item name',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.clear),
                   onPressed: () {
@@ -102,7 +102,7 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
             TextField(
               controller: dateController,
               decoration: InputDecoration(
-                labelText: 'Buscar por fecha (YYYY-MM-DD)',
+                labelText: 'Search by date (YYYY-MM-DD)',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: _pickDate,
@@ -111,26 +111,26 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
               readOnly: true,
             ),
             SizedBox(height: 16),
-            ElevatedButton(onPressed: _search, child: Text('Buscar')),
+            ElevatedButton(onPressed: _search, child: Text('Search')),
             SizedBox(height: 16),
             isLoading
                 ? CircularProgressIndicator()
                 : Expanded(
                     child: filteredTransactions.isEmpty
-                        ? Text('No se encontraron transacciones.')
+                        ? Text('No transactions found.')
                         : ListView.builder(
                             itemCount: filteredTransactions.length,
                             itemBuilder: (context, index) {
                               final tx = filteredTransactions[index];
                               return ExpansionTile(
                                 title: Text(
-                                  'Total: \$${tx.precioTotal.toStringAsFixed(2)} - Cambio: \$${tx.cambio.toStringAsFixed(2)}',
+                                  'Total: \$${tx.precioTotal.toStringAsFixed(2)} - Change: \$${tx.cambio.toStringAsFixed(2)}',
                                 ),
                                 children: tx.items.map((item) {
                                   return ListTile(
                                     title: Text(item['nombre']),
                                     subtitle: Text(
-                                      'Cantidad: ${item['cantidad']}',
+                                      'Quantity: ${item['cantidad']}',
                                     ),
                                     trailing: Text(
                                       '\$${(item['precio'] as double).toStringAsFixed(2)}',
