@@ -29,7 +29,7 @@ Follow these steps to get the application up and running on your local machine.
 Open your terminal or Git Bash and run the following command:
 
 ```
-git clone https://github.com/your-username/your-repo.git
+git clone --branch FinalSubmission --single-branch https://github.com/TeddyTjoe1990/CSE-499-Project.git
 ```
 
 2. Navigate to the Project Directory
