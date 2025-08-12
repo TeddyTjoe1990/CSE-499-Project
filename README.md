@@ -35,6 +35,7 @@ git clone --branch FinalSubmission --single-branch https://github.com/TeddyTjoe1
 
 ```
 cd CSE-499-Project
+cd app
 ```
 
 3. Install Dependencies - Run flutter pub get to install all the packages and dependencies defined in the pubspec.yaml file.
