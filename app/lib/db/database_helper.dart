@@ -30,24 +30,29 @@ class DatabaseHelper {
         await db.execute('''
           CREATE TABLE Transaksi (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            itemName TEXT,
-            quantity INTEGER,
-            price REAL,
-            date TEXT
+            itemName TEXT NOT NULL,
+            quantity INTEGER NOT NULL,
+            price REAL NOT NULL,
+            date TEXT NOT NULL,
+            total REAL NOT NULL,
+            change REAL NOT NULL
           )
         ''');
       },
     );
   }
 
-  Future<void> insertTransaction(TransactionModel transaction, double change, List<Item> items) async {
+  Future<void> insertTransaction(
+      TransactionModel transaction, double change, List<Item> items) async {
     final db = await database;
+    // Pastikan toMap() sudah mengembalikan semua kolom termasuk total & change
     await db.insert('Transaksi', transaction.toMap());
   }
 
   Future<List<TransactionModel>> getAllTransactions() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('Transaksi', orderBy: 'date DESC');
+    final List<Map<String, dynamic>> maps =
+        await db.query('Transaksi', orderBy: 'date DESC');
     return List.generate(maps.length, (i) {
       return TransactionModel.fromMap(maps[i]);
     });
