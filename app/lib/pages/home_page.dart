@@ -127,10 +127,7 @@ class _CashierHomeState extends State<CashierHome> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ElevatedButton(
-              onPressed: _saveTransaction,
-              child: Text('Save'),
-            ),
+            ElevatedButton(onPressed: _saveTransaction, child: Text('Save')),
             SizedBox(height: 10),
             // NUEVO BOTÓN: para ir a la lista de transacciones
             ElevatedButton(
@@ -143,6 +140,14 @@ class _CashierHomeState extends State<CashierHome> {
                 );
               },
               child: Text('View Transactions'),
+            ),
+            SizedBox(height: 10),
+            // BOTÓN: para ir al dashboard de analíticas
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/analytics_dashboard');
+              },
+              child: Text('Analytics Dashboard'),
             ),
           ],
         ),

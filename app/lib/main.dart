@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
 import 'pages/home_page.dart'; // <- CashierHome page
+import 'pages/analytics_dashboard_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,7 @@ class CashierApp extends StatelessWidget {
         '/home': (context) => CashierHome(),
         '/transaction_list': (context) => TransactionListPage(),
         '/search_transactions': (context) => TransactionSearchPage(),
+        '/analytics_dashboard': (context) => AnalyticsDashboardPage(),
       },
     );
   }
