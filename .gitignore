@@ -1,0 +1,46 @@
+# Archivos de metadatos de varias plataformas
+.DS_Store
+Thumbs.db
+
+# Archivos generados por herramientas de Flutter y Dart.
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# Archivos de configuración de IDEs (IntelliJ, Android Studio, VSCode).
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Archivos de registro y depuración.
+app_*.apk
+app_*.aab
+*.log
+*.crash
+
+# Archivos de dependencias de iOS (CocoaPods).
+ios/Pods/
+ios/Flutter/App.framework
+ios/Flutter/engine.xcconfig
+ios/.symlinks/
+ios/Runner.xcworkspace
+
+# Archivos de dependencias de macOS.
+macos/Pods/
+macos/Flutter/ephemeral
+macos/.symlinks/
+
+# Archivos de dependencias de Linux.
+linux/flutter/ephemeral
+
+# Archivos de dependencias de Windows.
+windows/flutter/ephemeral
+
+# Archivos sensibles que no deben ser subidos.
+# Por ejemplo, si tienes un archivo con claves de API.
+# secrets.json
+# .env
